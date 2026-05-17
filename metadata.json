@@ -1,0 +1,8 @@
+{
+  "name": "Mughtafar — Ana Kheir Ente Kheir",
+  "description": "Website Resmi Angkatan Mughtafar - Salafiyah Pasuruan. Dilengkapi panel admin untuk manajemen anggota, artikel, dokumentasi, dan quotes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

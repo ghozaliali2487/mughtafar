@@ -1,0 +1,121 @@
+{
+  "entities": {
+    "Anggota": {
+      "title": "Anggota",
+      "description": "Data anggota angkatan Mughtafar",
+      "type": "object",
+      "properties": {
+        "nama": { "type": "string" },
+        "kelas": { "type": "string" },
+        "kamar": { "type": "string" },
+        "alamat": { "type": "string" },
+        "motto": { "type": "string" },
+        "keahlian": { "type": "string" },
+        "foto": { "type": "string", "description": "Base64 or URL of the photo" }
+      },
+      "required": ["nama"]
+    },
+    "Album": {
+      "title": "Album",
+      "description": "Album dokumentasi kegiatan",
+      "type": "object",
+      "properties": {
+        "nama": { "type": "string" },
+        "desc": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["nama"]
+    },
+    "Photo": {
+      "title": "Photo",
+      "description": "Foto dalam album",
+      "type": "object",
+      "properties": {
+        "albumId": { "type": "string" },
+        "url": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["albumId", "url"]
+    },
+    "Quote": {
+      "title": "Quote",
+      "description": "Kutipan inspiratif",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "author": { "type": "string" },
+        "cat": { "type": "string" }
+      },
+      "required": ["text"]
+    },
+    "Artikel": {
+      "title": "Artikel",
+      "description": "Artikel atau tulisan santri",
+      "type": "object",
+      "properties": {
+        "judul": { "type": "string" },
+        "penulis": { "type": "string" },
+        "kat": { "type": "string" },
+        "isi": { "type": "string" },
+        "cover": { "type": "string" },
+        "date": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["judul", "isi"]
+    },
+    "Pengurus": {
+      "title": "Pengurus",
+      "description": "Data pengurus angkatan",
+      "type": "object",
+      "properties": {
+        "nama": { "type": "string" },
+        "jabatan": { "type": "string" },
+        "foto": { "type": "string" }
+      },
+      "required": ["nama", "jabatan"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Pengaturan website",
+      "type": "object",
+      "properties": {
+        "about": { "type": "string" },
+        "wa": { "type": "string" },
+        "ig": { "type": "string" },
+        "fb": { "type": "string" },
+        "tt": { "type": "string" },
+        "yt": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "anggota": {
+      "schema": "Anggota",
+      "description": "Koleksi anggota"
+    },
+    "albums": {
+      "schema": "Album",
+      "description": "Koleksi album dokumentasi"
+    },
+    "photos": {
+      "schema": "Photo",
+      "description": "Koleksi foto individual (untuk menghindari limit 1MB di album)"
+    },
+    "quotes": {
+      "schema": "Quote",
+      "description": "Koleksi quotes"
+    },
+    "artikels": {
+      "schema": "Artikel",
+      "description": "Koleksi artikel"
+    },
+    "pengurus": {
+      "schema": "Pengurus",
+      "description": "Koleksi pengurus"
+    },
+    "settings": {
+      "schema": "Settings",
+      "description": "Koleksi tunggal pengaturan (dokumen 'main')"
+    }
+  }
+}

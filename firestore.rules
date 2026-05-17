@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { 
+      return isSignedIn() && request.auth.token.email == 'ghozaliali2487@gmail.com' && request.auth.token.email_verified == true; 
+    }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    function isValidAnggota(row) {
+      return row.keys().hasAll(['nama']) &&
+             row.nama is string && row.nama.size() <= 200 &&
+             (!('kelas' in row) || (row.kelas is string && row.kelas.size() <= 50)) &&
+             (!('kamar' in row) || (row.kamar is string && row.kamar.size() <= 50)) &&
+             (!('alamat' in row) || (row.alamat is string && row.alamat.size() <= 500)) &&
+             (!('motto' in row) || (row.motto is string && row.motto.size() <= 500)) &&
+             (!('keahlian' in row) || (row.keahlian is string && row.keahlian.size() <= 500)) &&
+             (!('foto' in row) || (row.foto is string && row.foto.size() <= 1048576)); // 1MB limit for Base64 photo
+    }
+
+    function isValidAlbum(row) {
+      return row.keys().hasAll(['nama']) &&
+             row.nama is string && row.nama.size() <= 200 &&
+             (!('desc' in row) || (row.desc is string && row.desc.size() <= 1000));
+    }
+
+    function isValidPhoto(row) {
+      return row.keys().hasAll(['albumId', 'url']) &&
+             row.albumId is string && row.albumId.size() <= 128 &&
+             row.url is string && row.url.size() <= 1048576;
+    }
+
+    function isValidQuote(row) {
+      return row.keys().hasAll(['text']) &&
+             row.text is string && row.text.size() <= 1000 &&
+             (!('author' in row) || (row.author is string && row.author.size() <= 100)) &&
+             (!('cat' in row) || (row.cat is string && row.cat.size() <= 100));
+    }
+
+    function isValidArtikel(row) {
+      return row.keys().hasAll(['judul', 'isi']) &&
+             row.judul is string && row.judul.size() <= 200 &&
+             row.isi is string && row.isi.size() <= 500000 &&
+             (!('penulis' in row) || (row.penulis is string && row.penulis.size() <= 100)) &&
+             (!('kat' in row) || (row.kat is string && row.kat.size() <= 100)) &&
+             (!('cover' in row) || (row.cover is string && row.cover.size() <= 1048576)) &&
+             (!('date' in row) || (row.date is string && row.date.size() <= 100));
+    }
+
+    function isValidPengurus(row) {
+      return row.keys().hasAll(['nama', 'jabatan']) &&
+             row.nama is string && row.nama.size() <= 200 &&
+             row.jabatan is string && row.jabatan.size() <= 200 &&
+             (!('foto' in row) || (row.foto is string && row.foto.size() <= 1048576));
+    }
+
+    // --- Collections ---
+
+    match /anggota/{id} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(id) && isValidAnggota(incoming());
+      allow update: if isAdmin() && isValidId(id) && isValidAnggota(incoming());
+      allow delete: if isAdmin() && isValidId(id);
+    }
+
+    match /albums/{id} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(id) && isValidAlbum(incoming());
+      allow update: if isAdmin() && isValidId(id) && isValidAlbum(incoming());
+      allow delete: if isAdmin() && isValidId(id);
+    }
+
+    match /photos/{id} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(id) && isValidPhoto(incoming());
+      allow update: if isAdmin() && isValidId(id) && isValidPhoto(incoming());
+      allow delete: if isAdmin() && isValidId(id);
+    }
+
+    match /quotes/{id} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(id) && isValidQuote(incoming());
+      allow update: if isAdmin() && isValidId(id) && isValidQuote(incoming());
+      allow delete: if isAdmin() && isValidId(id);
+    }
+
+    match /artikels/{id} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(id) && isValidArtikel(incoming());
+      allow update: if isAdmin() && isValidId(id) && isValidArtikel(incoming());
+      allow delete: if isAdmin() && isValidId(id);
+    }
+
+    match /pengurus/{id} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(id) && isValidPengurus(incoming());
+      allow update: if isAdmin() && isValidId(id) && isValidPengurus(incoming());
+      allow delete: if isAdmin() && isValidId(id);
+    }
+
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(id);
+    }
+  }
+}
